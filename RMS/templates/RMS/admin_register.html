@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Registration - RMS</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Roboto', sans-serif; background: #f8fafc; }
+        .container { max-width: 400px; margin: 60px auto; background: #fff; border-radius: 16px; box-shadow: 0 4px 24px rgba(0,0,0,0.08); padding: 40px 32px; text-align: center; }
+        h2 { font-size: 2rem; margin-bottom: 16px; color: #2d3748; }
+        form { display: flex; flex-direction: column; }
+        input[type="text"], input[type="password"] { padding: 12px; margin-bottom: 18px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 1rem; }
+        button { padding: 12px; border-radius: 8px; border: none; background: #3182ce; color: #fff; font-size: 1.1rem; cursor: pointer; transition: background 0.2s; }
+        button:hover { background: #2b6cb0; }
+        .error { color: #e53e3e; margin-bottom: 12px; }
+        .success { color: #38a169; margin-bottom: 12px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Admin Registration</h2>
+        {% if error %}
+            <div class="error">{{ error }}</div>
+        {% endif %}
+        {% if success %}
+            <div class="success">{{ success }}</div>
+        {% endif %}
+        <form method="post">
+            {% csrf_token %}
+            <input type="text" name="superuser_username" placeholder="Superuser Username" required>
+            <input type="password" name="superuser_password" placeholder="Superuser Password" required>
+            <input type="text" name="new_admin_username" placeholder="New Admin Username" required>
+            <input type="password" name="new_admin_password" placeholder="New Admin Password" required>
+            <button type="submit">Register Admin</button>
+        </form>
+    </div>
+</body>
+</html>

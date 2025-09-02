@@ -1,3 +1,26 @@
+from django.contrib.auth.models import User
+def admin_register(request):
+	error = None
+	success = None
+	if request.method == 'POST':
+		superuser_username = request.POST.get('superuser_username')
+		superuser_password = request.POST.get('superuser_password')
+		new_admin_username = request.POST.get('new_admin_username')
+		new_admin_password = request.POST.get('new_admin_password')
+		superuser = authenticate(request, username=superuser_username, password=superuser_password)
+		if superuser is not None and superuser.is_superuser:
+			if User.objects.filter(username=new_admin_username).exists():
+				error = 'Admin username already exists.'
+			else:
+				new_admin = User.objects.create_user(username=new_admin_username, password=new_admin_password)
+				new_admin.is_staff = True
+				new_admin.save()
+				success = 'Admin registered successfully!'
+		else:
+			error = 'Invalid superuser credentials.'
+	return render(request, 'RMS/admin_register.html', {'error': error, 'success': success})
+def user_home(request):
+	return render(request, 'RMS/homepage.html')  # Placeholder, can be updated later
 from django.contrib.auth.decorators import login_required, user_passes_test
 @login_required
 @user_passes_test(lambda u: u.is_staff)
