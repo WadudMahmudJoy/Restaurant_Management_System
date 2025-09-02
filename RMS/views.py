@@ -11,7 +11,7 @@ def super_admin_login(request):
 			error = 'Invalid super admin credentials or not Bithi.'
 	return render(request, 'RMS/admin_login.html', {'error': error, 'super_admin': True})
 def user_home(request):
-	return render(request, 'RMS/homepage.html')  # Placeholder, can be updated later
+	return render(request, 'RMS/user_home.html')
 from django.contrib.auth.decorators import login_required
 @login_required
 def super_admin_dashboard(request):
