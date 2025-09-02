@@ -58,7 +58,11 @@
 </head>
 <body>
     <div class="container">
-        <h2>Admin Login</h2>
+        {% if super_admin %}
+            <h2>Super Admin Login</h2>
+        {% else %}
+            <h2>Admin Login</h2>
+        {% endif %}
         {% if error %}
             <div class="error">{{ error }}</div>
         {% endif %}

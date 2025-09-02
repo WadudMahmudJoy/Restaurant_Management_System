@@ -1,30 +1,50 @@
-from django.contrib.auth.models import User
-def admin_register(request):
+def super_admin_login(request):
 	error = None
-	success = None
 	if request.method == 'POST':
-		superuser_username = request.POST.get('superuser_username')
-		superuser_password = request.POST.get('superuser_password')
-		new_admin_username = request.POST.get('new_admin_username')
-		new_admin_password = request.POST.get('new_admin_password')
-		superuser = authenticate(request, username=superuser_username, password=superuser_password)
-		if superuser is not None and superuser.is_superuser:
+		username = request.POST.get('username')
+		password = request.POST.get('password')
+		user = authenticate(request, username=username, password=password)
+		if user is not None and user.is_superuser and user.username == 'Bithi':
+			login(request, user)
+			return redirect('super_admin_dashboard')
+		else:
+			error = 'Invalid super admin credentials or not Bithi.'
+	return render(request, 'RMS/admin_login.html', {'error': error, 'super_admin': True})
+def user_home(request):
+	return render(request, 'RMS/homepage.html')  # Placeholder, can be updated later
+from django.contrib.auth.decorators import login_required
+@login_required
+def super_admin_dashboard(request):
+	from django.contrib.auth.models import User
+	is_super_admin = request.user.is_superuser and request.user.username == 'Bithi'
+	admins = None
+	message = None
+	if is_super_admin:
+		admins = User.objects.filter(is_staff=True, is_superuser=False)
+		if request.method == 'POST' and 'add_admin' in request.POST:
+			new_admin_username = request.POST.get('new_admin_username')
+			new_admin_password = request.POST.get('new_admin_password')
 			if User.objects.filter(username=new_admin_username).exists():
-				error = 'Admin username already exists.'
+				message = 'Admin username already exists.'
 			else:
 				new_admin = User.objects.create_user(username=new_admin_username, password=new_admin_password)
 				new_admin.is_staff = True
 				new_admin.save()
-				success = 'Admin registered successfully!'
-		else:
-			error = 'Invalid superuser credentials.'
-	return render(request, 'RMS/admin_register.html', {'error': error, 'success': success})
-def user_home(request):
-	return render(request, 'RMS/homepage.html')  # Placeholder, can be updated later
-from django.contrib.auth.decorators import login_required, user_passes_test
-@login_required
-@user_passes_test(lambda u: u.is_staff)
+				message = 'Admin added successfully!'
+		if request.method == 'POST' and 'delete_admin' in request.POST:
+			del_username = request.POST.get('delete_admin')
+			User.objects.filter(username=del_username, is_staff=True, is_superuser=False).delete()
+			message = f'Admin {del_username} deleted.'
+		admins = User.objects.filter(is_staff=True, is_superuser=False)
+	else:
+		return render(request, 'RMS/super_admin_dashboard.html', {'is_super_admin': False, 'admins': None})
+	return render(request, 'RMS/super_admin_dashboard.html', {
+		'is_super_admin': is_super_admin,
+		'admins': admins,
+		'message': message
+	})
 def admin_dashboard(request):
+	# Placeholder for normal admin dashboard
 	return render(request, 'RMS/admin_dashboard.html')
 from django.contrib.auth import authenticate, login
 from django.shortcuts import redirect

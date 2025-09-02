@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,7 +9,8 @@
     <style>
         body {
             font-family: 'Roboto', sans-serif;
-            background: linear-gradient(120deg, #f8fafc 0%, #e2e8f0 100%);
+            background: url('{% static 'RMS/background.jpg' %}') no-repeat center center fixed;
+            background-size: cover;
             margin: 0;
             padding: 0;
         }
@@ -60,11 +62,17 @@
     <div class="container">
         <h1>Welcome to RMS</h1>
         <p>A unique and comfortable restaurant management experience for everyone.</p>
-    <a href="{% url 'admin_login' %}" class="btn">Admin Login</a>
-        <a href="{% url 'user_home' %}" class="btn">User Access</a>
-        <div class="notice-box">
-            <strong>Notice Box:</strong> Share your recommendations and experiences here!
-        </div>
+    <a href="{% url 'super_admin_login' %}" class="btn">Super Admin</a>
+    <a href="{% url 'admin_login' %}" class="btn">Admin</a>
+    <a href="{% url 'user_home' %}" class="btn">User</a>
+            <div class="notice-box">
+                <strong>Notice Box:</strong>
+                <form method="post" style="margin-top:12px;">
+                    {% csrf_token %}
+                    <textarea name="notice_message" rows="3" style="width:100%;padding:8px;border-radius:6px;border:1px solid #3182ce;resize:none;" placeholder="Drop your message, review, or suggestion..."></textarea>
+                    <button type="submit" class="btn" style="margin-top:8px;">Submit</button>
+                </form>
+            </div>
     </div>
 </body>
 </html>
