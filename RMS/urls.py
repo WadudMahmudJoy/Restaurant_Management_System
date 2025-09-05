@@ -8,4 +8,5 @@ urlpatterns = [
     path('rms-admin/dashboard/', views.admin_dashboard, name='admin_dashboard'),
     path('super-admin/dashboard/', views.super_admin_dashboard, name='super_admin_dashboard'),
     path('user/', views.user_home, name='user_home'),
+    path('rms-admin/orders/', views.order_management, name='order_management'),
 ]

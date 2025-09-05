@@ -18,54 +18,31 @@
 <body>
     <div class="container">
         <h2>User Menu</h2>
+        {% if message %}
+            <div style="color: green; margin-bottom: 16px;">{{ message }}</div>
+        {% endif %}
+        {% for category, foods in foods_by_category.items %}
         <div class="menu-section">
-            <div class="menu-title">Breakfast</div>
+            <div class="menu-title">{{ category }}</div>
             <div class="food-list">
-                <div class="food-item">Egg Toast</div>
-                <div class="food-item">Pancakes</div>
-                <div class="food-item">Oatmeal</div>
+                {% for food in foods %}
+                <div class="food-item">
+                    <form method="post" style="margin-bottom:0;">
+                        {% csrf_token %}
+                        <strong>{{ forloop.counter }}. {{ food.name }}</strong><br>
+                        Stock: {{ food.stock }}<br>
+                        <input type="hidden" name="food_id" value="{{ food.id }}">
+                        <input type="number" name="quantity" min="1" max="{{ food.stock }}" value="1" style="width:50px;">
+                        <input type="text" name="customer_name" placeholder="Your name" style="width:100px;">
+                        <button type="submit" class="btn">Add</button>
+                    </form>
+                </div>
+                {% empty %}
+                <div class="food-item">No items available.</div>
+                {% endfor %}
             </div>
         </div>
-        <div class="menu-section">
-            <div class="menu-title">Lunch</div>
-            <div class="food-list">
-                <div class="food-item">Chicken Rice</div>
-                <div class="food-item">Fish Curry</div>
-                <div class="food-item">Vegetable Stir Fry</div>
-            </div>
-        </div>
-        <div class="menu-section">
-            <div class="menu-title">Dinner</div>
-            <div class="food-list">
-                <div class="food-item">Grilled Salmon</div>
-                <div class="food-item">Beef Steak</div>
-                <div class="food-item">Mixed Salad</div>
-            </div>
-        </div>
-        <div class="menu-section">
-            <div class="menu-title">Snack</div>
-            <div class="food-list">
-                <div class="food-item">French Fries</div>
-                <div class="food-item">Nachos</div>
-                <div class="food-item">Fruit Bowl</div>
-            </div>
-        </div>
-        <div class="menu-section">
-            <div class="menu-title">Fastfood</div>
-            <div class="food-list">
-                <div class="food-item">Burger</div>
-                <div class="food-item">Pizza</div>
-                <div class="food-item">Hot Dog</div>
-            </div>
-        </div>
-        <div class="menu-section">
-            <div class="menu-title">Juice & Drinks</div>
-            <div class="food-list">
-                <div class="food-item">Orange Juice</div>
-                <div class="food-item">Coffee</div>
-                <div class="food-item">Milkshake</div>
-            </div>
-        </div>
+        {% endfor %}
     </div>
 </body>
 </html>

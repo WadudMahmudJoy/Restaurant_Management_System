@@ -1,3 +1,11 @@
+from .models import Order, Waiter, Chef
+
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def order_management(request):
+	orders = Order.objects.all().order_by('-created_at')
+	return render(request, 'RMS/order_management.html', {'orders': orders})
 def super_admin_login(request):
 	error = None
 	if request.method == 'POST':
@@ -10,8 +18,34 @@ def super_admin_login(request):
 		else:
 			error = 'Invalid super admin credentials or not Bithi.'
 	return render(request, 'RMS/admin_login.html', {'error': error, 'super_admin': True})
+from .models import Food
+from django.shortcuts import render, redirect
 def user_home(request):
-	return render(request, 'RMS/user_home.html')
+	categories = [
+		'Breakfast', 'Lunch', 'Dinner', 'Snack', 'Fastfood', 'Juice & Drinks'
+	]
+	foods_by_category = {cat: Food.objects.filter(category=cat, stock__gt=0) for cat in categories}
+	message = None
+	if request.method == 'POST':
+		food_id = request.POST.get('food_id')
+		quantity = int(request.POST.get('quantity', 1))
+		customer_name = request.POST.get('customer_name', 'Guest')
+		food = Food.objects.get(id=food_id)
+		if food.stock >= quantity:
+			# Create order
+			from .models import Order
+			order = Order.objects.create(
+				customer_name=customer_name,
+				food_items=f"{food.name} x {quantity}",
+				status='Pending'
+			)
+			# Reduce stock
+			food.stock -= quantity
+			food.save()
+			message = f"Order placed for {food.name} x {quantity}!"
+		else:
+			message = f"Not enough stock for {food.name}."
+	return render(request, 'RMS/user_home.html', {'foods_by_category': foods_by_category, 'message': message})
 from django.contrib.auth.decorators import login_required
 @login_required
 def super_admin_dashboard(request):
