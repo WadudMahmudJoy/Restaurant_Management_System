@@ -1,0 +1,146 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block title %}Menu studio · {{ venue.name }}{% endblock %}
+
+{% block page %}
+<header class="page-head">
+  <div>
+    <span class="eyebrow">menu studio · smart add</span>
+    <h1 style="margin-top:10px">Name, price, stock. That's it.</h1>
+    <p>The studio matches your typing against every dish you've ever sold. Photograph a plate once and it is inherited by twins forever —
+      identical uploads are de-duplicated by checksum, never stored twice.</p>
+  </div>
+  <div class="page-actions">
+    <span class="chip"><span class="dot dot--gold"></span>{{ counts.total }} dishes</span>
+    <span class="chip"><span class="dot dot--warn"></span>{{ counts.low }} low stock</span>
+    <span class="chip"><span class="dot dot--info"></span>{{ counts.photos }} photos · {{ counts.shared }} shared</span>
+  </div>
+</header>
+
+<section class="page-body">
+  <div class="studio">
+    <!-- ── composer ─────────────────────────────────────────────────── -->
+    <section class="panel composer" data-composer>
+      <div class="composer__hero">
+        <div class="row-between">
+          <span class="panel__title" data-composer-mode-title>New dish</span>
+          <span class="tiny" data-composer-hint>three fields required</span>
+        </div>
+        <div class="smartbar is-off" data-smart role="status" aria-live="polite">
+          <span class="dot dot--gold pulse"></span><span data-smart-text></span>
+        </div>
+      </div>
+
+      <form class="composer__body" id="composer-form" data-composer-form autocomplete="off">
+        {% csrf_token %}
+        <input type="hidden" name="mode" value="auto" data-mode>
+        <input type="hidden" name="photo_id" value="" data-photo-id>
+        <input type="hidden" name="twin_id" value="" data-twin-id>
+
+        <div class="field">
+          <label for="f-name">Dish name <span class="faint" data-name-state></span></label>
+          <input class="input input--big" id="f-name" name="name" placeholder="e.g. Wild Mushroom Risotto" required maxlength="90">
+          <span class="hint" data-name-hint>We match this against every dish on record.</span>
+        </div>
+
+        <div class="cols--2" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="field">
+            <label for="f-price">Price <span class="faint" data-price-basis></span></label>
+            <div class="row" style="gap:0">
+              <span class="mono" style="padding:11px 0 11px 13px;color:var(--muted);border:1px solid var(--hair);border-right:0;border-radius:var(--r-sm) 0 0 var(--r-sm);background:rgba(0,0,0,.28)">{{ venue.currency_symbol }}</span>
+              <input class="input input--money" id="f-price" name="price" inputmode="decimal" placeholder="0.00"
+                     style="border-radius:0 var(--r-sm) var(--r-sm) 0" step="0.50">
+            </div>
+          </div>
+          <div class="field">
+            <label for="f-stock">Stock <span class="faint">portions</span></label>
+            <input class="input input--money" id="f-stock" name="stock" inputmode="numeric" placeholder="0">
+            <span class="hint" data-stock-hint></span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="f-category">Chapter <span class="faint" data-chapter-basis>optional — we'll pick one</span></label>
+          <select class="select" id="f-category" name="category">
+            <option value="">Let the studio decide</option>
+          </select>
+        </div>
+
+        <details class="field" data-more>
+          <summary class="tiny" style="cursor:pointer;list-style:none">Optional detail — subtitle, cost, heat, diet</summary>
+          <div class="cols" style="grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
+            <input class="input" name="subtitle" placeholder="One-line subtitle" maxlength="120">
+            <input class="input input--money" name="cost" placeholder="Cost (for margin)" inputmode="decimal">
+            <input class="input" name="heat" placeholder="Heat 0–3" inputmode="numeric" maxlength="1">
+            <label class="check"><input type="checkbox" name="is_veg"> vegetarian</label>
+            <label class="check"><input type="checkbox" name="is_signature"> signature</label>
+          </div>
+          <textarea class="textarea" name="description" placeholder="Description (optional)" maxlength="400" style="margin-top:10px"></textarea>
+        </details>
+
+        <div class="field">
+          <label>Photo <span class="faint" data-photo-state>optional</span></label>
+          <div class="drop" data-drop>
+            <img alt="" data-drop-img hidden>
+            <span class="chip drop__badge" data-drop-badge hidden></span>
+            <div class="drop__actions" data-drop-actions hidden>
+              <button type="button" class="btn btn--xs btn--ghost" data-action="pick">library</button>
+              <button type="button" class="btn btn--xs btn--ghost" data-action="clear-photo">remove</button>
+            </div>
+            <div class="drop__hint">
+              <b class="serif" style="font-size:19px">Drop a plate photo</b>
+              <span class="hint">or <label class="gold" style="cursor:pointer">browse<input type="file" accept="image/*" name="photo" hidden data-file></label>
+                — identical files are never stored twice</span>
+            </div>
+          </div>
+        </div>
+      </form>
+
+      <div class="composer__foot">
+        <span class="pill-note grow"><span class="dot dot--good"></span><span data-foot-note>Nothing typed yet — the studio is listening.</span></span>
+        <button class="btn btn--ghost btn--sm" data-action="reset" type="button">reset</button>
+        <button class="btn btn--gold" data-action="save" type="submit" form="composer-form" id="composer-submit">Save dish</button>
+      </div>
+    </section>
+
+    <!-- ── live list ────────────────────────────────────────────────── -->
+    <section class="panel" style="overflow:hidden">
+      <div class="panel__head" style="flex-wrap:wrap;gap:10px">
+        <span class="panel__title">Menu ledger</span>
+        <div class="row" style="gap:8px;flex-wrap:wrap">
+          <div class="search" style="height:34px;width:min(240px,42vw)">
+            <span class="tiny">⌕</span><input placeholder="Search dishes…" data-search aria-label="Search dishes">
+          </div>
+          <div class="btn-group" data-views>
+            <button class="btn btn--sm is-active" data-view="all">all</button>
+            <button class="btn btn--sm" data-view="live">live</button>
+            <button class="btn btn--sm" data-view="low">low</button>
+            <button class="btn btn--sm" data-view="no-photo">no photo</button>
+            <button class="btn btn--sm" data-view="hidden">86'd</button>
+          </div>
+        </div>
+      </div>
+      <div class="panel__body" style="padding-top:12px">
+        <div class="dishlist" data-dishlist>
+          {% for i in "1234567" %}<div class="skeleton" style="height:60px"></div>{% endfor %}
+        </div>
+      </div>
+
+      <div class="panel__head" style="border-top:1px solid var(--hair);border-bottom:0">
+        <span class="panel__title"><span class="dot dot--info"></span>Shared photo library</span>
+        <span class="tiny">{{ counts.photos }} files · {{ counts.shared }} re-used by twins</span>
+      </div>
+      <div class="panel__body">
+        <div class="lib" data-library>
+          {% for i in "1234" %}<div class="skeleton" style="aspect-ratio:4/3;border-radius:10px"></div>{% endfor %}
+        </div>
+      </div>
+    </section>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script type="application/json" data-role="studio-seed">{{ seed|json_script }}</script>
+<script src="{% static 'js/studio.js' %}" defer></script>
+{% endblock %}

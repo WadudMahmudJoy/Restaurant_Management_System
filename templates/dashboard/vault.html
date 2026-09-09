@@ -1,0 +1,60 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block title %}Data vault · {{ venue.name }}{% endblock %}
+
+{% block page %}
+<header class="page-head">
+  <div>
+    <span class="eyebrow">data vault · schema, live</span>
+    <h1 style="margin-top:10px">The whole database, <em class="serif">open</em>.</h1>
+    <p>Every table the app writes to, with columns, relations, constraints, indexes and live row counts. Introspected from the
+      models at request time — this page cannot drift out of date.</p>
+  </div>
+  <div class="page-actions">
+    <span class="chip" data-role="db-engine">—</span>
+    <span class="chip" data-role="db-size">—</span>
+    <span class="chip" data-role="db-journal">—</span>
+    <a class="btn btn--sm btn--ghost" href="/django-admin/">Django admin</a>
+  </div>
+</header>
+
+<section class="page-body">
+  <section class="panel" style="padding:16px 18px 6px">
+    <div class="row-between wrap" style="gap:14px">
+      <span class="panel__title"><span class="dot dot--gold"></span>Relationship map</span>
+      <span class="tiny">solid = foreign key · dashed = reverse relation · gold = the photo library reuse link</span>
+    </div>
+    <svg class="erd" data-role="erd" viewBox="0 0 1000 340" role="img" aria-label="Entity relationship diagram"></svg>
+  </section>
+
+  <div class="vault">
+    <nav class="vault__list" data-vault-list aria-label="Tables">
+      <div class="skeleton" style="height:220px;border-radius:12px"></div>
+    </nav>
+
+    <section class="panel" style="overflow:hidden">
+      <div class="panel__head">
+        <div>
+          <span class="panel__title" data-role="table-name">—</span>
+          <p class="tiny" data-role="table-doc" style="margin:5px 0 0;max-width:74ch"></p>
+        </div>
+        <div class="row" style="gap:8px">
+          <span class="chip" data-role="table-rows">—</span>
+          <span class="chip" data-role="table-app">—</span>
+        </div>
+      </div>
+      <div class="colschema" data-role="table-fields">
+        <div class="panel__body"><div class="skeleton" style="height:260px"></div></div>
+      </div>
+      <div class="panel__head" style="border-top:1px solid var(--hair);border-bottom:0;flex-wrap:wrap;gap:10px">
+        <span class="tiny" data-role="table-indexes">—</span>
+        <span class="tiny" data-role="table-constraints">—</span>
+      </div>
+    </section>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/vault.js' %}" defer></script>
+{% endblock %}

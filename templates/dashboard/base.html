@@ -1,0 +1,82 @@
+{% load static %}<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}{{ venue.name }} · Control room{% endblock %}</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='9' fill='%23D8B26A'/><text x='16' y='23' font-family='Georgia' font-size='18' text-anchor='middle' fill='%2317110a'>L</text></svg>">
+<meta name="theme-color" content="#0a0b0d">
+<link rel="stylesheet" href="{% static 'css/base.css' %}">
+<link rel="stylesheet" href="{% static 'css/app.css' %}">
+{% block css %}{% endblock %}
+<style>:root { --gold: {{ venue.accent }}; --gold-soft: {{ venue.accent_soft }}; }</style>
+<script type="importmap">{"imports": {"three": "{% static 'vendor/three/three.module.js' %}"}}</script>
+</head>
+<body>
+<div class="grain" aria-hidden="true"></div>
+<div class="spotlight" aria-hidden="true"></div>
+
+<div class="app">
+  <aside class="rail-nav">
+    <a class="rail-nav__brand brand" href="/">
+      <span class="brand__mark">{{ venue.name|slice:":1"|upper }}</span>
+      <span><span>{{ venue.name }}</span><span class="brand__sub">Control room</span></span>
+    </a>
+
+    <div class="rail-nav__group">Service</div>
+    <a class="rail-link {% nav_active request.path '/dashboard/' %}" href="/dashboard/"><span class="rail-link__ico">◈</span>Overview</a>
+    <a class="rail-link {% nav_active request.path '/orders/' %}" href="/orders/"><span class="rail-link__ico">▤</span>Tickets
+      {% if nav_badges.open_orders %}<span class="rail-link__badge is-hot">{{ nav_badges.open_orders }}</span>{% endif %}</a>
+    <a class="rail-link {% nav_active request.path '/kitchen/' %}" href="/kitchen/"><span class="rail-link__ico">♨</span>Kitchen rail</a>
+
+    <div class="rail-nav__group">Menu</div>
+    <a class="rail-link {% nav_active request.path '/studio/' %}" href="/studio/"><span class="rail-link__ico">✦</span>Studio
+      {% if nav_badges.low_stock %}<span class="rail-link__badge">{{ nav_badges.low_stock }}</span>{% endif %}</a>
+    <a class="rail-link" href="/menu/" target="_blank" rel="noopener"><span class="rail-link__ico">◍</span>Guest view</a>
+    <a class="rail-link {% nav_active request.path '/vault/' %}" href="/vault/"><span class="rail-link__ico">▦</span>Data vault</a>
+    <a class="rail-link" href="/django-admin/" target="_blank" rel="noopener"><span class="rail-link__ico">⚙</span>Django admin</a>
+
+    <div class="rail-foot">
+      <div class="row" style="gap:8px">
+        <span class="dot pulse {% if venue.is_open_now %}dot--good{% else %}dot--idle{% endif %}"></span>
+        <span class="tiny">{% if venue.is_open_now %}Service open{% else %}Closed{% endif %} · {{ venue.hours_label }}</span>
+      </div>
+      <div class="who">
+        <span class="avatar">{{ user.get_username|initials }}</span>
+        <span class="grow" style="min-width:0">
+          <span class="small" style="display:block;font-weight:600">{{ user.get_full_name|default:user.get_username }}</span>
+          <span class="tiny">{{ user.profile.get_role_display|default:"team" }}</span>
+        </span>
+        <form method="post" action="/logout/">{% csrf_token %}
+          <button class="btn btn--icon btn--quiet btn--sm" title="Sign out" aria-label="Sign out">⏻</button>
+        </form>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+    {% block page %}{% endblock %}
+  </main>
+</div>
+
+<div class="scrim" data-scrim></div>
+<div class="drawer" data-drawer role="dialog" aria-modal="true" aria-label="Dish detail">
+  <div class="drawer__head">
+    <span class="avatar avatar--lg" data-drawer-avatar>◆</span>
+    <div class="grow">
+      <h3 data-drawer-title>Dish</h3>
+      <p class="tiny" data-drawer-sub>—</p>
+    </div>
+    <button class="btn btn--icon btn--quiet btn--sm" data-drawer-close aria-label="Close">✕</button>
+  </div>
+  <div class="drawer__body" data-drawer-body></div>
+  <div class="drawer__foot" data-drawer-foot></div>
+</div>
+
+{% if messages %}<div class="toasts" data-server-messages style="position:fixed">{% for m in messages %}<div class="toast is-in toast--{{ m.tags }}" data-autohide><span class="toast__mark"></span><div class="toast__body">{{ m }}</div></div>{% endfor %}</div>{% endif %}
+<div class="toasts" data-toasts aria-live="polite"></div>
+<noscript><div class="wrap-page" style="padding:20px"><div class="smartbar">The control room streams live data from the API — enable JavaScript to see it move.</div></div></noscript>
+<script src="{% static 'js/rms.js' %}" defer></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

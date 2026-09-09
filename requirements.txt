@@ -1,0 +1,4 @@
+# Restaurant Management System — backend requirements
+# Install with:  python -m venv .venv && .venv/bin/pip install -r requirements.txt
+Django==5.2.5
+Pillow==11.3.0

@@ -1,0 +1,39 @@
+{% extends "admin/base.html" %}
+{# Lumière RMS · re-skin of the stock Django admin.                                #}
+{# Every admin page extends admin/base_site.html, so this one file paints the      #}
+{# changelists, the change forms, the inlines, the app index and the login screen. #}
+{% load static %}
+
+{% block title %}{% if subtitle %}{{ subtitle }} | {% endif %}{{ title }} · {{ venue.name|default:"Lumière" }} admin{% endblock %}
+
+{% block extrastyle %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'css/admin-theme.css' %}">
+  <meta name="theme-color" content="#0a0b0d">
+{% endblock %}
+
+{% block extrahead %}
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><text y='19' font-size='19'>🥂</text></svg>">
+{% endblock %}
+
+{% block branding %}
+  <div id="site-name">
+    <a href="{% url 'admin:index' %}">{{ venue.name|default:"Lumière" }} · <span class="vault-word">data vault</span></a>
+  </div>
+  {% if user.is_anonymous %}{% include "admin/color_theme_toggle.html" %}{% endif %}
+{% endblock %}
+
+{# nav-global is empty in the stock admin — used here to walk back into the app. #}
+{% block nav-global %}
+  <nav class="rms-jumps" aria-label="Back to the app">
+    <a href="{{ app_links.dashboard }}">Dashboard</a>
+    <a href="{{ app_links.studio }}">Menu studio</a>
+    <a href="{{ app_links.board }}">Service board</a>
+    <a href="{{ app_links.vault }}">Schema explorer</a>
+  </nav>
+{% endblock %}
+
+{% block footer %}
+  <p class="tiny rms-note">Rows edited here are the same rows the studio, the board and the kitchen display read —
+    ledgers in <code>menu_pricechange</code> and <code>menu_stockmovement</code> stay the source of truth.</p>
+{% endblock %}

@@ -1,0 +1,68 @@
+/* Django admin, re-skinned to match the app. */
+#header {
+  background: linear-gradient(90deg, #0b0d10, #14171c) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  color: #eceae4;
+  padding: 12px 20px;
+}
+#branding h1, #branding h1 a:link, #branding h1 a:visited { color: #f0dcb0 !important; font-family: Georgia, serif; letter-spacing: -0.01em; }
+#user-tools { color: #b9bfc9; }
+#user-tools a { color: #d8b26a; }
+body, #container { background: #0a0b0d !important; color: #eceae4 !important; font-family: "Inter", system-ui, sans-serif !important; }
+#content-title { border-bottom-color: rgba(255, 255, 255, 0.08); }
+.module h2, .module caption, .inline-group h2 {
+  background: linear-gradient(90deg, rgba(216, 178, 106, 0.16), rgba(216, 178, 106, 0.03)) !important;
+  color: #f0dcb0 !important; font-weight: 600; letter-spacing: 0.02em;
+}
+.module, .results, #changelist-filter, .timetrace, .addlink, .panel { background: #0e1013 !important; }
+#changelist table, .results { border: 1px solid rgba(255, 255, 255, 0.07) !important; border-radius: 10px; overflow: hidden; }
+#changelist table thead th, .results thead th { background: #14171c !important; color: #8b93a1 !important; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; }
+#changelist table tbody tr:nth-child(odd) { background: rgba(255, 255, 255, 0.02) !important; }
+#changelist table tbody tr:hover { background: rgba(216, 178, 106, 0.08) !important; }
+div.breadcrumbs { background: #0e1013 !important; color: #8b93a1; border-bottom: 1px solid rgba(255, 255, 255, 0.06); }
+div.breadcrumbs a { color: #d8b26a; }
+input[type="text"], input[type="password"], input[type="number"], input[type="email"], textarea, select {
+  background: rgba(0, 0, 0, 0.35) !important; color: #eceae4 !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important; border-radius: 8px !important; padding: 8px 10px !important;
+}
+input:focus, textarea:focus, select:focus { border-color: rgba(216, 178, 106, 0.6) !important; box-shadow: 0 0 0 3px rgba(216, 178, 106, 0.12) !important; }
+.button, input[type="submit"], .submit-row input, a.button {
+  background: linear-gradient(180deg, #f0dcb0, #d8b26a 60%, #a8813c) !important; color: #17110a !important;
+  border: 0 !important; border-radius: 999px !important; font-weight: 600 !important; padding: 9px 16px !important;
+}
+.deletelink, .deletelink:link, .deletelink:visited { background: rgba(255, 107, 107, 0.16) !important; color: #ffb4b4 !important; border-radius: 999px !important; }
+#changelist-search input[type="submit"] { background: #d8b26a !important; color: #17110a !important; }
+.object-tools a { background: rgba(255, 255, 255, 0.06) !important; border-radius: 999px !important; color: #eceae4 !important; }
+fieldset .form-row, .form-row { background: transparent !important; border-color: rgba(255, 255, 255, 0.05) !important; }
+label { color: #b9bfc9 !important; }
+.help, p.help { color: #8b93a1 !important; }
+#changelist-filter h2 { background: transparent !important; color: #8b93a1 !important; }
+#changelist-filter a { color: #b9bfc9; }
+#changelist-filter li.selected a { color: #f0dcb0 !important; }
+.dashboard .app-menu h2 a { color: #f0dcb0; }
+.dashboard .model-group table th, .dashboard .model-group table td { background: transparent !important; }
+.dashboard .app-menu { border-color: rgba(255, 255, 255, 0.07); }
+.paginator, .full-tree { color: #8b93a1; }
+.msgbox, .messages li { border-radius: 10px; }
+.messages .success { background: rgba(78, 203, 143, 0.14); color: #9ce8c3; border: 1px solid rgba(78, 203, 143, 0.3); }
+.messages .warning { background: rgba(242, 181, 68, 0.14); color: #f7d68f; border: 1px solid rgba(242, 181, 68, 0.3); }
+.messages .error { background: rgba(255, 107, 107, 0.14); color: #ffb4b4; border: 1px solid rgba(255, 107, 107, 0.3); }
+.selector { background: transparent; }
+.selector .selector-chosen > h2, .selector .selector-available > h2 { color: #8b93a1; }
+.cal { background: #0e1013; color: #eceae4; }
+
+
+/* ── Lumière additions: app jumps in the header, notes in the footer ───────── */
+#header { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+.rms-jumps { display: flex; gap: 4px; margin-left: auto; }
+.rms-jumps a {
+  color: #cfd4dd; text-decoration: none; font-size: 12px; letter-spacing: .04em;
+  text-transform: uppercase; padding: 6px 11px; border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, .1); transition: border-color .18s ease, color .18s ease, background .18s ease;
+}
+.rms-jumps a:hover { color: #f0dcb0; border-color: rgba(216, 178, 106, .55); background: rgba(216, 178, 106, .1); }
+#branding #site-name .vault-word { color: #9aa3b0; }
+#footer { padding: 18px 0 30px; color: #7f8894; }
+.rms-note { margin: 0; max-width: 74ch; line-height: 1.6; }
+.rms-note code { color: #c9b183; background: rgba(216, 178, 106, .08); padding: 1px 5px; border-radius: 5px; }
+@media (max-width: 760px) { #header { align-items: flex-start; } .rms-jumps { margin-left: 0; flex-wrap: wrap; } }
