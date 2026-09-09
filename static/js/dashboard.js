@@ -259,7 +259,7 @@
     });
 
     document.querySelector('[data-action="floor-reset"]')?.addEventListener("click", () => {
-      (window.RMS.floor.all() || []).forEach((floor) => { floor.targetYaw = -0.42; });
+      (window.RMS.floor?.all() || []).forEach((floor) => { floor.targetYaw = -0.42; });
     });
 
     // keyboard: R refresh, A add dish, O orders, K kitchen

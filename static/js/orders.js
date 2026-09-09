@@ -227,7 +227,7 @@
     await loadDishes();
     render();
     paintLines();
-    if (window.RMS.floor) window.RMS.floor.set(tables);
+    if (window.RMS.floor?.set) window.RMS.floor.set(tables);
     const focus = new URLSearchParams(location.search).get("ticket");
     if (focus) {
       const order = orders.find((row) => String(row.id) === focus);

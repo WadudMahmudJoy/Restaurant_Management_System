@@ -15,7 +15,7 @@
 <div class="grain" aria-hidden="true"></div>
 <div class="auth">
   <div class="auth__pane">
-    <div class="auth__canvas" id="auth-3d" aria-hidden="true"></div>
+    <div class="auth__canvas" id="auth-3d" data-mode="auth" aria-hidden="true"></div>
     <div class="auth__card panel panel--pad" style="padding:26px 26px 22px">
       <a class="brand" href="/" style="margin-bottom:22px">
         <span class="brand__mark">{{ venue.name|slice:":1"|upper }}</span>
@@ -55,6 +55,6 @@
 </div>
 <div class="toasts" data-toasts></div>
 <script src="{% static 'js/rms.js' %}" defer></script>
-<script type="module" src="{% static 'js/hero.js' %}" data-mode="auth"></script>
+<script type="module" src="{% static 'js/hero.js' %}"></script>
 </body>
 </html>

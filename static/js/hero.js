@@ -11,8 +11,13 @@ import {
   dustParticles, contactShadowTexture, DISH_KEYS, GOLD,
 } from "./scenes.js";
 
-const MODE = document.currentScript?.dataset.mode || "landing";
-const HOST = document.getElementById(MODE === "auth" ? "auth-3d" : "hero-3d");
+/* Module scripts have no document.currentScript, so the mode is read from the
+   canvas host that this page actually rendered — plus an optional data-mode on
+   the host itself for anything unusual (e.g. an embed inside the dashboard). */
+const AUTH_HOST = document.getElementById("auth-3d");
+const LANDING_HOST = document.getElementById("hero-3d");
+const HOST = AUTH_HOST || LANDING_HOST;
+const MODE = (HOST && HOST.dataset.mode) || (AUTH_HOST ? "auth" : "landing");
 const LABEL = document.querySelector("[data-orbit-label]");
 
 function readDishes() {
