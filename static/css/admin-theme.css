@@ -50,3 +50,19 @@ label { color: #b9bfc9 !important; }
 .selector { background: transparent; }
 .selector .selector-chosen > h2, .selector .selector-available > h2 { color: #8b93a1; }
 .cal { background: #0e1013; color: #eceae4; }
+
+
+/* ── Lumière additions: app jumps in the header, notes in the footer ───────── */
+#header { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+.rms-jumps { display: flex; gap: 4px; margin-left: auto; }
+.rms-jumps a {
+  color: #cfd4dd; text-decoration: none; font-size: 12px; letter-spacing: .04em;
+  text-transform: uppercase; padding: 6px 11px; border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, .1); transition: border-color .18s ease, color .18s ease, background .18s ease;
+}
+.rms-jumps a:hover { color: #f0dcb0; border-color: rgba(216, 178, 106, .55); background: rgba(216, 178, 106, .1); }
+#branding #site-name .vault-word { color: #9aa3b0; }
+#footer { padding: 18px 0 30px; color: #7f8894; }
+.rms-note { margin: 0; max-width: 74ch; line-height: 1.6; }
+.rms-note code { color: #c9b183; background: rgba(216, 178, 106, .08); padding: 1px 5px; border-radius: 5px; }
+@media (max-width: 760px) { #header { align-items: flex-start; } .rms-jumps { margin-left: 0; flex-wrap: wrap; } }

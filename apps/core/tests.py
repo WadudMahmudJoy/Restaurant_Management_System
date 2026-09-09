@@ -155,3 +155,33 @@ class LoginRailTests(TestCase):
         self.client.force_login(self.user)
         response = self.client.post("/logout/")
         self.assertRedirects(response, "/")
+
+
+class AdminSkinTests(TestCase):
+    """The stock admin is re-skinned from one template — and that template must
+    actually be wired up, otherwise static/css/admin-theme.css is dead weight."""
+
+    def setUp(self):
+        self.user = User.objects.create_superuser("boss", "boss@example.com", "Passw0rd!")
+        self.client.force_login(self.user)
+
+    def test_admin_pages_load_the_project_stylesheet(self):
+        for url in ("/django-admin/", "/django-admin/menu/item/", "/django-admin/menu/photo/"):
+            with self.subTest(url=url):
+                self.assertContains(self.client.get(url), "css/admin-theme.css")
+
+    def test_admin_header_hands_you_back_to_the_app(self):
+        response = self.client.get("/django-admin/")
+        self.assertContains(response, 'href="/dashboard/"')
+        self.assertContains(response, 'href="/studio/"')
+        self.assertContains(response, "rms-jumps")
+
+    def test_admin_branding_uses_the_venue_row(self):
+        response = self.client.get("/django-admin/")
+        self.assertContains(response, "data vault")
+
+    def test_anonymous_admin_still_demands_a_login(self):
+        self.client.logout()
+        response = self.client.get("/django-admin/menu/item/")
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/django-admin/login/", response["Location"])

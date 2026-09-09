@@ -7,6 +7,12 @@ service board, a kitchen display and a **data vault** that documents its own sch
 Built on **Django 5.2 + SQLite + Three.js**, with zero build step: no bundler, no Node
 runtime required to run the app, no CDN dependency at runtime (three.js is vendored).
 
+The repository was cleaned out first. Gone: the old `RMS/` app (a `Food` model sketch), the
+`restaurant_site/` project package, seven templates that rendered nothing, the committed
+`db.sqlite3`, every `__pycache__`/`.pyc`, and `.idea/`. Nothing from that skeleton survived
+except Django itself as the foundation; all 38 previously tracked files were either replaced
+or deleted (see `git show --stat` on the rebuild commit).
+
 ```
 ┌──────────────┬───────────────────────────────────────────────────────────────────┐
 │ Route        │ What it is                                                         │
@@ -43,7 +49,7 @@ password is `Name@2026` as shown on the login card.
 Verify a fresh install in one line:
 
 ```bash
-.venv/bin/python manage.py test        # 41 unit/integration tests
+.venv/bin/python manage.py test        # 45 unit/integration tests
 .venv/bin/python scripts/smoke.py      # 40 end-to-end checks against the dev database
 ```
 
@@ -123,6 +129,11 @@ Design choices worth naming:
 * `static/css/base.css` — the tokens: ink surfaces, champagne gold, hairlines, one display serif,
   one grotesque, one mono; grain + vignette + pointer spotlight; everything respects
   `prefers-reduced-motion`.
+* `templates/admin/base_site.html` + `static/css/admin-theme.css` — the Django admin wears the
+  same suit: header, changelists, forms, inlines and the login screen. One file, because every
+  admin template extends it. (It reads its jump-links from `app_links` in the context processor —
+  `{% url %}` cannot be used there, the admin is mounted inside its own namespace, so
+  `{% url 'dashboard' %}` would resolve to nothing.)
 
 ## 5. Layout
 
