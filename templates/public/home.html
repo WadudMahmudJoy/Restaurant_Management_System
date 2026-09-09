@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+{% load static %}
+{% block css %}<link rel="stylesheet" href="{% static 'css/landing.css' %}">{% endblock %}
+{% block body_class %}is-landing{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <div class="hero__canvas" id="hero-3d" aria-hidden="true"></div>
+
+  <div class="hero__inner wrap-page">
+    <span class="eyebrow hero__eyebrow">{{ venue.name }} · {{ venue.address }}</span>
+    <h1>A restaurant that <em>runs itself</em><br>while you plate.</h1>
+    <p class="lead hero__lead">{{ venue.tagline }} Behind the pass sits an operating system built for one thing: getting a dish from
+      the chef's mind onto the menu — name, price, stock — in eleven seconds, with the photograph already remembered for you.</p>
+    <div class="hero__cta">
+      <a class="btn btn--gold" href="/dashboard/">Open the dashboard <span class="btn__kbd">⏎</span></a>
+      <a class="btn btn--ghost" href="/menu/">See tonight's menu</a>
+    </div>
+    <div class="hero__stats">
+      <div class="hero__stat"><b class="num" data-count="{{ stats.dishes }}">{{ stats.dishes }}</b><span>dishes live</span></div>
+      <div class="hero__stat"><b class="num" data-count="{{ stats.chapters }}">{{ stats.chapters }}</b><span>chapters</span></div>
+      <div class="hero__stat"><b class="num" data-count="{{ stats.photos }}">{{ stats.photos }}</b><span>photos stored once</span></div>
+      <div class="hero__stat"><b class="num" data-count="{{ stats.tickets_today }}">{{ stats.tickets_today }}</b><span>tickets today</span></div>
+      <div class="hero__stat"><b class="num" data-count="{{ stats.tables }}">{{ stats.tables }}</b><span>tables on floor</span></div>
+    </div>
+  </div>
+
+  <div class="hero__foot">
+    <span class="scrollcue"><i></i> drag the room · scroll to enter</span>
+    <span class="tiny">Kitchen lane target {{ venue.kitchen_lane_minutes }} min · {{ venue.currency_code }} {{ venue.tax_percent }} tax + {{ venue.service_percent }} service</span>
+  </div>
+  <div class="orbit-label" data-orbit-label aria-hidden="true"></div>
+</section>
+
+<section class="section wrap-page" id="menu">
+  <div class="section__head">
+    <div>
+      <span class="eyebrow">Tonight's board</span>
+      <h2 style="margin-top:12px">Priced, stocked and <em>photographed</em> already.</h2>
+      <p class="lead">Every card below is a live row from <span class="mono small">menu_item</span> — the same data the admin writes.
+        Nothing here is a mock-up.</p>
+    </div>
+    <a class="btn btn--ghost btn--sm" href="/menu/">Full menu →</a>
+  </div>
+  <div class="rail">
+    {% for item in featured_items %}
+      <article class="dish tilt" data-tilt data-stagger>
+        <div class="dish__media">
+          {% if item.photo %}
+            <img src="{{ item.photo_url }}" alt="{{ item.name }}" loading="lazy">
+          {% else %}
+            <div class="medallion" style="--accent: {{ item.category.accent }}"><span class="medallion__mark">{{ item.category.icon }}</span></div>
+          {% endif %}
+          <span class="dish__price num">{{ venue.currency_symbol }}{{ item.price }}</span>
+          <span class="dish__chapter" style="color: {{ item.category.accent }}">{{ item.category.icon }} {{ item.category.name }}</span>
+        </div>
+        <div class="dish__body">
+          <h3 class="dish__name">{{ item.name }}</h3>
+          <p class="dish__sub">{{ item.subtitle|default:item.description|truncatechars:74 }}</p>
+          <div class="dish__foot">
+            <span class="chip"><span class="dot dot--{{ item.stock_state|stock_tone }}"></span>{{ item.stock }} {{ item.unit }}</span>
+            <span class="tiny">{{ item.prep_minutes }} min · {{ item.get_station_display }}</span>
+          </div>
+        </div>
+        <span class="tilt__glare"></span>
+      </article>
+    {% empty %}
+      <div class="empty"><span class="empty__mark">◍</span>No dishes yet — add the first one in the studio.</div>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="section wrap-page" id="craft">
+  <div class="split">
+    <div>
+      <span class="eyebrow">The eleven-second add</span>
+      <h2 style="margin:12px 0 16px">Type three things. The system<br>remembers <em>everything else</em>.</h2>
+      <p class="lead">Menu work is mostly re-entry: the same dish, the same photograph, the same price, next season. Lumière refuses
+        to ask twice. It normalises every name, fingerprints every upload and keeps an append-only ledger, so a dish you photographed
+        once is photographed forever.</p>
+      <div class="row" style="margin-top:22px;gap:9px;flex-wrap:wrap">
+        <span class="chip"><span class="dot dot--gold"></span>sha-1 photo fingerprint dedupe</span>
+        <span class="chip">fuzzy twin matching</span>
+        <span class="chip">price ledger fallback</span>
+      </div>
+    </div>
+    <div class="steps">
+      <div class="step" data-reveal><span class="step__n"></span><div><h4>Name · price · stock</h4><p>That is the entire form. The studio infers the chapter, station, prep time and par level from your own history.</p></div></div>
+      <div class="step" data-reveal><span class="step__n"></span><div><h4>The photo is already there</h4><p>If any twin of that dish has ever had a picture, it is attached automatically and labelled “auto-inherited”.</p></div></div>
+      <div class="step" data-reveal><span class="step__n"></span><div><h4>Duplicates become restocks</h4><p>Re-adding an existing dish never clones a row — it tops the stock back to par and logs the movement.</p></div></div>
+      <div class="step" data-reveal><span class="step__n"></span><div><h4>One file, many dishes</h4><p>Re-uploading an identical picture is deduplicated by checksum and re-linked, so the media folder stays clean.</p></div></div>
+      <div class="step" data-reveal><span class="step__n"></span><div><h4>Every number is auditable</h4><p>Sales drain stock through <span class="mono small">menu_stockmovement</span>; price edits land in <span class="mono small">menu_pricechange</span>.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="section wrap-page" id="data">
+  <div class="section__head">
+    <div>
+      <span class="eyebrow">Data model</span>
+      <h2 style="margin-top:12px">Eleven tables, <em>deliberately</em> drawn.</h2>
+      <p class="lead">Constraints at the database level, indexes on every hot path, ledger tables instead of soft updates. Row counts are live.</p>
+    </div>
+    <a class="btn btn--ghost btn--sm" href="/vault/">Open the data vault →</a>
+  </div>
+  <div class="schema">
+    {% for table in schema %}
+      <div class="schema__table" data-reveal>
+        <div class="schema__name"><span>{{ table.name }}</span><span class="num" style="color:var(--muted)">{{ table.rows }}</span></div>
+        {% for col in table.columns %}<div class="schema__row"><span>{{ col.name }}</span><b>{{ col.kind }}</b></div>{% endfor %}
+      </div>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="section wrap-page">
+  <div class="cta-band">
+    <div class="row-between wrap" style="gap:26px;position:relative;z-index:2">
+      <div style="max-width:52ch">
+        <span class="eyebrow">Ready when service is</span>
+        <h2 style="margin:12px 0 10px">Walk into the control room.</h2>
+        <p class="lead" style="margin:0">Revenue curves, a 3D floor map, the live ticket rail and the menu studio — one page, no page reloads.</p>
+      </div>
+      <div class="stack" style="gap:10px;align-items:flex-start">
+        <a class="btn btn--gold" href="/dashboard/">Open dashboard</a>
+        <span class="tiny">demo team member — <span class="mono">bithi / Bithi@2026</span></span>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script type="application/json" data-role="hero-dishes">{{ featured|json_script }}</script>
+<script type="module" src="{% static 'js/hero.js' %}"></script>
+{% endblock %}

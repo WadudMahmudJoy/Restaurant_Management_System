@@ -1,0 +1,60 @@
+{% load static %}<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Staff sign in · {{ venue.name }}</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='9' fill='%23D8B26A'/><text x='16' y='23' font-family='Georgia' font-size='18' text-anchor='middle' fill='%2317110a'>L</text></svg>">
+<link rel="stylesheet" href="{% static 'css/base.css' %}">
+<link rel="stylesheet" href="{% static 'css/landing.css' %}">
+<link rel="stylesheet" href="{% static 'css/app.css' %}">
+<style>:root { --gold: {{ venue.accent }}; --gold-soft: {{ venue.accent_soft }}; }</style>
+<script type="importmap">{"imports": {"three": "{% static 'vendor/three/three.module.js' %}"}}</script>
+</head>
+<body>
+<div class="grain" aria-hidden="true"></div>
+<div class="auth">
+  <div class="auth__pane">
+    <div class="auth__canvas" id="auth-3d" aria-hidden="true"></div>
+    <div class="auth__card panel panel--pad" style="padding:26px 26px 22px">
+      <a class="brand" href="/" style="margin-bottom:22px">
+        <span class="brand__mark">{{ venue.name|slice:":1"|upper }}</span>
+        <span><span>{{ venue.name }}</span><span class="brand__sub">control room</span></span>
+      </a>
+      <h2 style="font-size:30px">Welcome back.</h2>
+      <p class="small muted" style="margin:8px 0 20px">{{ venue.hours_label }} · {% if venue.is_open_now %}<span class="tone-good">service is open</span>{% else %}closed{% endif %}</p>
+
+      {% if error %}<div class="smartbar" style="border-color:rgba(255,107,107,.45);background:rgba(255,107,107,.08);color:#ffb4b4;margin-bottom:14px"><span class="dot dot--bad"></span>{{ error }}</div>{% endif %}
+
+      <form method="post" class="stack" style="gap:13px">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ next }}">
+        <div class="field"><label for="id_username">Username</label>
+          <input class="input" id="id_username" name="username" autocomplete="username" autofocus required></div>
+        <div class="field"><label for="id_password">Password</label>
+          <input class="input" id="id_password" name="password" type="password" autocomplete="current-password" required></div>
+        <button class="btn btn--gold btn--block" type="submit">Enter the control room</button>
+      </form>
+
+      <div class="divider"></div>
+      <div class="demo">
+        <span class="tiny">demo team — click to fill</span>
+        <button class="demo__row" type="button" data-fill="bithi|Bithi@2026" style="border:0;background:none;cursor:pointer;text-align:left;padding:2px 0">owner · bithi / Bithi@2026</button>
+        <button class="demo__row" type="button" data-fill="noor|Noor@2026" style="border:0;background:none;cursor:pointer;text-align:left;padding:2px 0">manager · noor / Noor@2026</button>
+        <button class="demo__row" type="button" data-fill="chef|Chef@2026" style="border:0;background:none;cursor:pointer;text-align:left;padding:2px 0">chef · chef / Chef@2026</button>
+      </div>
+      <p class="tiny" style="margin:16px 0 0"><a href="/menu/" class="gold">browsing as a guest? open the menu →</a></p>
+    </div>
+  </div>
+
+  <aside class="auth__side">
+    <div class="side-img" style="background-image:url('/media/menu/seed/ribeye-au-poivre.jpg'),linear-gradient(180deg,rgba(10,11,13,.2),rgba(10,11,13,.65))"></div>
+    <blockquote class="side-quote">“A menu is a promise. Everything in this build exists so the promise is never broken by a typo,
+      a missing photograph or a stale price.”</blockquote>
+  </aside>
+</div>
+<div class="toasts" data-toasts></div>
+<script src="{% static 'js/rms.js' %}" defer></script>
+<script type="module" src="{% static 'js/hero.js' %}" data-mode="auth"></script>
+</body>
+</html>

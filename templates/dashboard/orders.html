@@ -1,0 +1,72 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block title %}Ticket board · {{ venue.name }}{% endblock %}
+
+{% block page %}
+<header class="page-head">
+  <div>
+    <span class="eyebrow">service floor</span>
+    <h1 style="margin-top:10px">The board.</h1>
+    <p>Four columns, one rail. Advance a ticket and the ledger moves with it — stock drains the moment a table settles.</p>
+  </div>
+  <div class="page-actions">
+    <span class="chip" data-role="open-value">—</span>
+    <span class="chip"><span class="dot dot--good pulse"></span>auto-refresh</span>
+    <a class="btn btn--sm btn--ghost" href="/kitchen/">Kitchen view</a>
+  </div>
+</header>
+
+<section class="page-body">
+  <div class="board" data-board>
+    {% for lane in "4" %}
+      <div class="lane"><div class="skeleton" style="height:24px;width:60%"></div><div class="skeleton" style="height:170px"></div></div>
+    {% endfor %}
+  </div>
+
+  <div class="cols" style="grid-template-columns:minmax(0,1.3fr) minmax(0,1fr)">
+    <section class="panel">
+      <div class="panel__head">
+        <span class="panel__title">Fire a new ticket</span>
+        <span class="tiny">staff-side composer · writes to orders_order + lines</span>
+      </div>
+      <div class="panel__body">
+        <form class="cols--2" style="display:grid;grid-template-columns:1fr 1fr;gap:12px" data-new-order>
+          <div class="field"><label for="o-guest">Guest</label><input class="input" id="o-guest" name="guest" placeholder="Walk-in name" maxlength="60"></div>
+          <div class="field"><label for="o-party">Covers</label><input class="input input--money" id="o-party" name="party" type="number" min="1" max="14" value="2"></div>
+          <div class="field"><label for="o-channel">Channel</label>
+            <select class="select" id="o-channel" name="channel">
+              <option value="dinein">Dine-in</option><option value="takeaway">Takeaway</option>
+              <option value="delivery">Delivery</option><option value="pickup">Pickup</option>
+            </select></div>
+          <div class="field"><label for="o-table">Table</label><select class="select" id="o-table" name="table"><option value="">no table</option></select></div>
+          <div class="field" style="grid-column:1/-1">
+            <label for="o-search">Dishes <span class="faint" data-role="cart-count">nothing added</span></label>
+            <div class="search"><span class="tiny">⌕</span>
+              <input id="o-search" placeholder="Type a dish, Enter to add…" autocomplete="off" data-order-search>
+              <button class="btn btn--xs btn--ghost" type="button" data-action="order-add">add</button>
+            </div>
+            <div class="rows" data-order-lines style="margin-top:9px"></div>
+          </div>
+          <div class="row" style="grid-column:1/-1;justify-content:flex-end;gap:9px">
+            <span class="mono" data-role="order-total">$0.00</span>
+            <button class="btn btn--gold btn--sm" type="submit">Fire ticket</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel__head"><span class="panel__title">Floor · 3D</span><span class="tiny">click a table to settle its ticket</span></div>
+      <div class="floor" data-role="floor" style="min-height:280px">
+        <div class="floor__tip" data-role="floor-tip"></div>
+      </div>
+    </section>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script type="application/json" data-role="orders-seed">{"orders": {{ orders|json_script }}, "floor": {{ floor|json_script }}, "statuses": {{ statuses|json_script }}}</script>
+<script type="module" src="{% static 'js/floor.js' %}"></script>
+<script src="{% static 'js/orders.js' %}" defer></script>
+{% endblock %}

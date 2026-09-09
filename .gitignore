@@ -1,0 +1,61 @@
+# ─────────────────────────────────────────────────────────────
+#  Restaurant Management System — ignore rules
+# ─────────────────────────────────────────────────────────────
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.eggs/
+build/
+develop-eggs/
+dist/
+sdist/
+wheels/
+pip-wheel-metadata/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Django
+*.log
+db.sqlite3
+db.sqlite3-journal
+db.sqlite3-shm
+db.sqlite3-wal
+db.json
+staticfiles/
+
+# runtime uploads (seeded imagery under media/menu/seed/ *is* versioned)
+media/uploads/
+.localstack/
+.coverage
+htmlcov/
+.coverage.*
+
+# Node / tooling
+node_modules/
+.npm/
+.cache/
+.parcel-cache/
+.vite/
+
+# Editors / OS
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Agent / tool scratch
+.arena/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/

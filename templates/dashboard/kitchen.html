@@ -1,0 +1,31 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block title %}Kitchen rail · {{ venue.name }}{% endblock %}
+
+{% block page %}
+<header class="page-head">
+  <div>
+    <span class="eyebrow">kitchen display · pass</span>
+    <h1 style="margin-top:10px">Fire, plate, call.</h1>
+    <p>Tickets in the order they arrived, with the lane target above every card. Tap a line as it leaves the pass.</p>
+  </div>
+  <div class="page-actions">
+    <span class="chip"><span class="dot dot--hot"></span>lane {{ lane_minutes }} min</span>
+    <span class="chip" data-role="kds-count">0 live</span>
+    <button class="btn btn--sm btn--ghost" data-action="advance-all">advance all</button>
+  </div>
+</header>
+
+<section class="page-body">
+  <div class="kds">
+    <div class="kds__rail" data-kds>
+      {% for i in "123" %}<div class="skeleton" style="height:210px;border-radius:14px"></div>{% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script type="application/json" data-role="kds-seed">{{ tickets|json_script }}</script>
+<script src="{% static 'js/kitchen.js' %}" defer></script>
+{% endblock %}

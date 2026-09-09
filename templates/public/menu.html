@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Tonight's menu · {{ venue.name }}{% endblock %}
+{% block css %}<link rel="stylesheet" href="{% static 'css/landing.css' %}">{% endblock %}
+{% block body_class %}is-guest{% endblock %}
+
+{% block content %}
+<section class="menu-hero wrap-page">
+  <span class="eyebrow">{{ venue.name }} · {{ venue.hours_label }}</span>
+  <h1 style="margin-top:14px;max-width:22ch">Tonight, <em>plated</em> for you.</h1>
+  <p class="lead">{{ dish_count }} dishes across {{ chapters_count }} chapters. Tap a plate to add it to your table —
+    the kitchen sees it the second you send.</p>
+</section>
+
+<div class="wrap-page">
+  <nav class="chapter-nav" data-chapter-nav aria-label="Menu chapters"></nav>
+</div>
+
+<main class="wrap-page" style="padding-bottom:120px">
+  <div data-chapters>
+    <div class="rail" style="margin-top:14px">
+      {% for i in "123456" %}<div class="skeleton" style="aspect-ratio:4/3;border-radius:20px"></div>{% endfor %}
+    </div>
+  </div>
+</main>
+
+<aside class="cart" data-cart>
+  <span class="tiny" style="flex:none">your table</span>
+  <div class="cart__items" data-cart-items></div>
+  <span class="mono" data-cart-total style="flex:none">$0.00</span>
+  <button class="btn btn--gold btn--sm" data-action="checkout" style="flex:none">Send to kitchen</button>
+  <button class="btn btn--icon btn--quiet btn--sm" data-action="clear-cart" aria-label="Clear">✕</button>
+</aside>
+
+<div class="modal" data-modal hidden>
+  <div class="panel panel--pad" style="width:min(420px,92vw)">
+    <h3 style="font-family:var(--font-display);font-size:24px">Send to the pass</h3>
+    <p class="small muted">We'll print it on the kitchen rail immediately. No account needed.</p>
+    <form data-checkout-form class="stack" style="gap:12px;margin-top:14px">
+      <div class="field"><label for="g-name">Name on the ticket</label>
+        <input class="input" id="g-name" name="guest" placeholder="e.g. Élodie" maxlength="60" required></div>
+      <div class="field"><label for="g-party">Covers</label>
+        <input class="input input--money" id="g-party" name="party" type="number" min="1" max="12" value="2"></div>
+      <div class="field"><label for="g-note">Note for the kitchen</label>
+        <textarea class="textarea" id="g-note" name="note" placeholder="Allergies, occasion, temperature…" maxlength="200"></textarea></div>
+      <div class="row" style="justify-content:flex-end;gap:9px">
+        <button type="button" class="btn btn--ghost btn--sm" data-action="close-modal">not yet</button>
+        <button type="submit" class="btn btn--gold btn--sm">Fire {{ dish_count }} →</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script type="application/json" data-role="menu-seed">{{ chapters|json_script }}</script>
+<script src="{% static 'js/guest.js' %}" defer></script>
+{% endblock %}
